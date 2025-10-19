@@ -6,18 +6,87 @@
   <title>404 - Not found</title>
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    body { display:flex; align-items:center; justify-content:center; height:100vh; background:#f7f9fc; }
-    .card { background:white; padding:40px; border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,0.08); max-width:720px }
-    h1 { color:#333 }
-    p { color:#666 }
-    a { color:#4A90E2 }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .error-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4rem 3rem;
+      border-radius: 20px;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    .error-code {
+      font-size: 6rem;
+      font-weight: 700;
+      margin: 0 0 1rem 0;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin: 0 0 1rem 0;
+      font-weight: 600;
+    }
+    p {
+      color: rgba(255, 255, 255, 0.6);
+      margin: 0 0 2rem 0;
+      line-height: 1.6;
+    }
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .error-link {
+      padding: 0.875rem 2rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .error-link.primary {
+      background: var(--pure-white);
+      color: var(--primary-black);
+    }
+    .error-link.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+    }
+    .error-link.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--pure-white);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .error-link.secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>404 — Page not found</h1>
-    <p>We couldn't find <strong><%= url %></strong>.</p>
-    <p><a href="/">Return home</a> or <a href="/login">login</a>.</p>
+  <div class="error-card">
+    <div class="error-code">404</div>
+    <h1>Page Not Found</h1>
+    <p>We couldn't find <strong><%= url %></strong>. The page you're looking for doesn't exist.</p>
+    <div class="error-actions">
+      <a href="/" class="error-link primary">Return Home</a>
+      <a href="/login" class="error-link secondary">Login</a>
+    </div>
   </div>
 </body>
 </html>
