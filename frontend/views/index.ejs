@@ -3,249 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeSpeak - Real-Time Code Transcription</title>
+    <title>CodeSpeak - Accessible Code Transcription</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         .hero {
-            position: relative;
-            z-index: 1;
-            min-height: 85vh;
+            background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            min-height: 60vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 4rem 2rem;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: pulse 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.3; }
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 900px;
         }
 
         .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .hero-subtitle {
-            font-size: clamp(1rem, 3vw, 1.5rem);
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 3rem;
-            font-weight: 400;
-            letter-spacing: 0.01em;
-            line-height: 1.6;
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            max-width: 600px;
         }
 
         .cta-buttons {
             display: flex;
-            gap: 1.5rem;
+            gap: 20px;
             justify-content: center;
+            margin-top: 30px;
             flex-wrap: wrap;
         }
 
         .cta-btn {
-            padding: 1.125rem 2.5rem;
-            font-size: 1.125rem;
+            padding: 15px 40px;
+            font-size: 1.1rem;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .cta-btn:hover::before {
-            width: 400px;
-            height: 400px;
-        }
-
-        .cta-btn > span {
-            position: relative;
-            z-index: 1;
+            transition: all 0.3s;
+            font-weight: bold;
         }
 
         .cta-btn.primary {
-            background: var(--pure-white);
-            color: var(--primary-black);
+            background: white;
+            color: #4A90E2;
         }
 
         .cta-btn.primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         .cta-btn.secondary {
             background: transparent;
-            color: var(--pure-white);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border: 2px solid white;
         }
 
         .cta-btn.secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--pure-white);
-            transform: translateY(-3px);
+            background: white;
+            color: #4A90E2;
         }
 
-        .stats-section {
-            padding: 6rem 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .stats-grid {
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 60px 20px;
             max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stat-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .stat-value {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-label {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 1rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .features-section {
-            padding: 6rem 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .features-header {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 4rem;
-        }
-
-        .features-header h2 {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
-        }
-
-        .features-header p {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1.125rem;
-        }
-
-        .features-grid {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
         }
 
         .feature-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.2);
             transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            display: block;
+            font-size: 3rem;
+            margin-bottom: 15px;
         }
 
         .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-            letter-spacing: -0.01em;
+            color: #4A90E2;
+            margin-bottom: 10px;
         }
 
-        .feature-card p {
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.6;
+        .stats {
+            background: #F5F5F5;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-item h2 {
+            font-size: 2.5rem;
+            color: #4A90E2;
+            margin-bottom: 10px;
+        }
+
+        .stat-item p {
+            color: #666;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -254,77 +132,67 @@
 
     <main>
         <section class="hero">
-            <div class="hero-content">
-                <h1>Code Transcription Reimagined</h1>
-                <p class="hero-subtitle">Real-time speech-to-code transcription for accessible CS education. Making programming lectures universally accessible.</p>
-                <div class="cta-buttons">
-                    <a href="/register" class="cta-btn primary">
-                        <span>Get Started</span>
-                    </a>
-                    <a href="#features" class="cta-btn secondary">
-                        <span>Explore Features</span>
-                    </a>
-                </div>
+            <h1>📝 CodeSpeak</h1>
+            <p>Real-time code transcription for accessible CS education</p>
+            <p>Making computer science education truly accessible to deaf and hard-of-hearing students</p>
+            <div class="cta-buttons">
+                <a href="/register" class="cta-btn primary">Get Started</a>
+                <a href="#features" class="cta-btn secondary">Learn More</a>
             </div>
         </section>
 
-        <section class="stats-section">
+        <section class="stats">
+            <h2>Our Impact</h2>
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value">87%</div>
-                    <div class="stat-label">Accuracy</div>
+                <div class="stat-item">
+                    <h2>87%</h2>
+                    <p>Code Detection Accuracy</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">&lt;200ms</div>
-                    <div class="stat-label">Latency</div>
+                <div class="stat-item">
+                    <h2>&lt;200ms</h2>
+                    <p>Processing Latency</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">5+</div>
-                    <div class="stat-label">Languages</div>
+                <div class="stat-item">
+                    <h2>5</h2>
+                    <p>Languages Supported</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">24/7</div>
-                    <div class="stat-label">Available</div>
+                <div class="stat-item">
+                    <h2>∞</h2>
+                    <p>Students Empowered</p>
                 </div>
             </div>
         </section>
 
-        <section class="features-section" id="features">
-            <div class="features-header">
-                <h2>Powerful Features</h2>
-                <p>Built for accessibility, designed for excellence</p>
+        <section class="features" id="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Real-Time Detection</h3>
+                <p>Intelligent ML model identifies code within natural speech with 87% accuracy</p>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <span class="feature-icon">⚡</span>
-                    <h3>Real-Time Detection</h3>
-                    <p>Advanced ML model identifies code within natural speech with industry-leading accuracy</p>
-                </div>
-                <div class="feature-card">
-                    <span class="feature-icon">✨</span>
-                    <h3>Smart Correction</h3>
-                    <p>Automatically fixes transcription errors specific to programming syntax</p>
-                </div>
-                <div class="feature-card">
-                    <span class="feature-icon">📚</span>
-                    <h3>Code Library</h3>
-                    <p>Organized, searchable archive of all code snippets from your lectures</p>
-                </div>
-                <div class="feature-card">
-                    <span class="feature-icon">🎯</span>
-                    <h3>Lightning Fast</h3>
-                    <p>Sub-200ms latency ensures real-time transcription display</p>
-                </div>
-                <div class="feature-card">
-                    <span class="feature-icon">🎨</span>
-                    <h3>Syntax Highlighting</h3>
-                    <p>Beautiful code formatting with language-specific highlighting</p>
-                </div>
-                <div class="feature-card">
-                    <span class="feature-icon">♿</span>
-                    <h3>Fully Accessible</h3>
-                    <p>WCAG 2.1 AA compliant with keyboard navigation and screen reader support</p>
-                </div>
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3>Smart Correction</h3>
+                <p>Automatically fixes transcription errors specific to programming syntax</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗂️</div>
+                <h3>Code Library</h3>
+                <p>Organized, searchable archive of all code snippets from lectures</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>Sub-200ms latency for real-time transcription display</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Syntax Highlighting</h3>
+                <p>Beautiful code formatting with language-specific highlighting</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">♿</div>
+                <h3>Fully Accessible</h3>
+                <p>WCAG 2.1 AA compliant, keyboard navigation, screen reader support</p>
             </div>
         </section>
     </main>
