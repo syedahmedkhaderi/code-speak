@@ -6,14 +6,7 @@
         </div>
         
         <nav class="nav">
-            <% if (!process.env.MONGODB_URI) { %>
-                <div class="preview-badge">Preview Mode</div>
-                <a href="/live" class="nav-link">Live Lecture</a>
-                <a href="/archive" class="nav-link">Archive</a>
-                <span class="user-info">
-                    <span class="username"><%= user.name %></span>
-                </span>
-            <% } else if (typeof user !== 'undefined' && user) { %>
+            <% if (typeof user !== 'undefined' && user) { %>
                 <a href="/live" class="nav-link">Live Lecture</a>
                 <a href="/archive" class="nav-link">Archive</a>
                 <span class="user-info">

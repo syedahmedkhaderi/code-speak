@@ -89,30 +89,6 @@ header {
     transform: translateY(-1px);
 }
 
-.preview-badge {
-    background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-right: 16px;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 6px rgba(74, 144, 226, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
-    }
-}
-
 .logout-btn {
     background: var(--error-color);
     color: white;
