@@ -1,4 +1,4 @@
-// utils/validation.js
+// This is utils/validation.js
 const validateTranscription = (lectureId, text, timestamp) => {
     const errors = [];
     
