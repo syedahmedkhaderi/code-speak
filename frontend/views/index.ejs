@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSpeak - Accessible Code Transcription</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .cta-btn.primary {
+            background: white;
+            color: #4A90E2;
+        }
+
+        .cta-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .cta-btn.secondary:hover {
+            background: white;
+            color: #4A90E2;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: #4A90E2;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            background: #F5F5F5;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-item h2 {
+            font-size: 2.5rem;
+            color: #4A90E2;
+            margin-bottom: 10px;
+        }
+
+        .stat-item p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main>
+        <section class="hero">
+            <h1>📝 CodeSpeak</h1>
+            <p>Real-time code transcription for accessible CS education</p>
+            <p>Making computer science education truly accessible to deaf and hard-of-hearing students</p>
+            <div class="cta-buttons">
+                <a href="/register" class="cta-btn primary">Get Started</a>
+                <a href="#features" class="cta-btn secondary">Learn More</a>
+            </div>
+        </section>
+
+        <section class="stats">
+            <h2>Our Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h2>87%</h2>
+                    <p>Code Detection Accuracy</p>
+                </div>
+                <div class="stat-item">
+                    <h2>&lt;200ms</h2>
+                    <p>Processing Latency</p>
+                </div>
+                <div class="stat-item">
+                    <h2>5</h2>
+                    <p>Languages Supported</p>
+                </div>
+                <div class="stat-item">
+                    <h2>∞</h2>
+                    <p>Students Empowered</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Real-Time Detection</h3>
+                <p>Intelligent ML model identifies code within natural speech with 87% accuracy</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3>Smart Correction</h3>
+                <p>Automatically fixes transcription errors specific to programming syntax</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗂️</div>
+                <h3>Code Library</h3>
+                <p>Organized, searchable archive of all code snippets from lectures</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>Sub-200ms latency for real-time transcription display</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Syntax Highlighting</h3>
+                <p>Beautiful code formatting with language-specific highlighting</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">♿</div>
+                <h3>Fully Accessible</h3>
+                <p>WCAG 2.1 AA compliant, keyboard navigation, screen reader support</p>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

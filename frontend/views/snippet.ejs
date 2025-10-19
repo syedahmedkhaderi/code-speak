@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Snippet - CodeSpeak</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <style>
+        .snippet-viewer {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 900px;
+            margin: 30px auto;
+        }
+
+        .snippet-header {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .snippet-header h2 {
+            margin: 0 0 10px 0;
+            color: #4A90E2;
+        }
+
+        .snippet-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .snippet-code {
+            background: #2D2D2D;
+            border-radius: 6px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .snippet-code code {
+            color: #F8F8F2;
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .snippet-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .snippet-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .btn-copy {
+            background: #50E3C2;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #3DD9B5;
+        }
+
+        .btn-back {
+            background: #4A90E2;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #3A7BC8;
+        }
+
+        .snippet-explanation {
+            background: #F5F5F5;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .snippet-explanation h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .snippet-explanation p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .confidence-badge {
+            display: inline-block;
+            background: #50E3C2;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body class="protected">
+    <%- include('partials/header') %>
+
+    <main>
+        <div class="snippet-viewer">
+            <div class="snippet-header">
+                <h2>Code Snippet</h2>
+                <div class="snippet-meta">
+                    <span>💻 Language: <strong id="language">JavaScript</strong></span>
+                    <span>📚 Lecture: <strong id="lecture-title">Unknown</strong></span>
+                    <span>⏱️ Time: <strong id="timestamp">00:00</strong></span>
+                    <span id="confidence-meta"></span>
+                </div>
+            </div>
+
+            <div class="snippet-actions">
+                <button class="snippet-actions button btn-copy" onclick="copySnippet()">📋 Copy Code</button>
+                <button class="snippet-actions button btn-back" onclick="goBack()">← Back to Archive</button>
+            </div>
+
+            <div class="snippet-code">
+                <code id="code-content"></code>
+            </div>
+
+            <div class="snippet-explanation" id="explanation-section" style="display: none;">
+                <h3>Context</h3>
+                <p id="explanation-text"></p>
+            </div>
+
+            <div style="background: #F0F0F0; padding: 15px; border-radius: 6px; font-size: 0.9rem; color: #666;">
+                <strong>Original Transcription:</strong>
+                <p id="original-text" style="margin: 10px 0 0 0; font-family: monospace;"></p>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>
+        async function loadSnippet() {
+            const snippetId = new URLSearchParams(window.location.search).get('id');
+            
+            if (!snippetId) {
+                alert('Snippet ID not found');
+                window.location.href = '/archive';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/snippets/${snippetId}`, {
+                    headers: authManager.getAuthHeader()
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load snippet');
+                }
+
+                const snippet = await response.json();
+
+                document.getElementById('language').textContent = snippet.language || 'Unknown';
+                document.getElementById('lecture-title').textContent = snippet.lectureTitle || 'Unknown';
+                document.getElementById('timestamp').textContent = formatTime(snippet.timestamp);
+                document.getElementById('code-content').textContent = snippet.code;
+                document.getElementById('original-text').textContent = snippet.originalTranscript;
+
+                if (snippet.explanation) {
+                    document.getElementById('explanation-section').style.display = 'block';
+                    document.getElementById('explanation-text').textContent = snippet.explanation;
+                }
+
+                if (snippet.confidence) {
+                    const confidenceMeta = document.getElementById('confidence-meta');
+                    confidenceMeta.innerHTML = `<span>✅ Confidence: <strong>${Math.round(snippet.confidence * 100)}%</strong></span>`;
+                }
+
+                // Highlight code
+                if (typeof hljs !== 'undefined') {
+                    hljs.highlightElement(document.getElementById('code-content'));
+                }
+
+            } catch (error) {
+                console.error('Error loading snippet:', error);
+                alert('Failed to load snippet');
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function copySnippet() {
+            const code = document.getElementById('code-content').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Code copied to clipboard!');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                alert('Failed to copy code');
+            });
+        }
+
+        function goBack() {
+            window.location.href = '/archive';
+        }
+
+        // Load snippet on page load
+        loadSnippet();
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Lecture - CodeSpeak</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="protected">
+    <%- include('partials/header') %>
+
+    <main class="container">
+        <div class="main-panel">
+            <section class="lecture-setup">
+                <h2>Start Lecture Recording</h2>
+                
+                <div id="error-message" class="alert alert-danger"></div>
+                <div id="success-message" class="alert alert-success"></div>
+
+                <div class="form-group">
+                    <label for="lecture-title">Lecture Title *</label>
+                    <input 
+                        type="text" 
+                        id="lecture-title" 
+                        placeholder="e.g., Data Structures - Arrays"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="lecture-subject">Subject *</label>
+                    <select id="lecture-subject" required>
+                        <option value="">Select a subject</option>
+                        <option value="Data Structures">Data Structures</option>
+                        <option value="Algorithms">Algorithms</option>
+                        <option value="Web Dev">Web Development</option>
+                        <option value="Machine Learning">Machine Learning</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="controls">
+                    <button id="start-btn" class="btn btn-primary">🎙️ Start Recording</button>
+                    <button id="stop-btn" class="btn btn-danger" disabled>⏹️ Stop Recording</button>
+                </div>
+            </section>
+
+            <section class="transcription-panel">
+                <div class="panel-header">
+                    <h3>Live Transcription</h3>
+                    <div class="stats">
+                        <span>📝 <span id="text-count">0</span> entries</span>
+                        <span>💻 <span id="snippet-count">0</span> code snippets</span>
+                    </div>
+                </div>
+
+                <div id="interim-transcript" class="interim-transcript"></div>
+                <div id="transcription-container" class="transcript-container"></div>
+            </section>
+        </div>
+
+        <aside class="side-panel">
+            <h4>Code Snippets</h4>
+            <div id="snippets-list" class="snippets-list"></div>
+            <button id="export-btn" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                📥 Export Snippets
+            </button>
+        </aside>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/recorder.js"></script>
+    <script src="/js/transcription.js"></script>
+    <script src="/js/codeHighlight.js"></script>
+
+    <script>
+        let currentLectureId = null;
+
+        document.getElementById('start-btn').addEventListener('click', async () => {
+            const title = document.getElementById('lecture-title').value;
+            const subject = document.getElementById('lecture-subject').value;
+
+            if (!title || !subject) {
+                showError('Please enter lecture title and subject');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/lectures/start', {
+                    method: 'POST',
+                    headers: authManager.getAuthHeader(),
+                    body: JSON.stringify({ title, subject })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                currentLectureId = data.lectureId;
+                transcriptionDisplay.setLectureId(currentLectureId);
+
+                await recorder.startRecording(currentLectureId);
+                document.getElementById('start-btn').disabled = true;
+                document.getElementById('stop-btn').disabled = false;
+
+                showSuccess('Lecture recording started');
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        document.getElementById('stop-btn').addEventListener('click', async () => {
+            recorder.stopRecording();
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+
+            // End lecture on backend
+            try {
+                const response = await fetch(`/api/lectures/end/${currentLectureId}`, {
+                    method: 'POST',
+                    headers: authManager.getAuthHeader()
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                showSuccess('Lecture recording ended and saved');
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        document.getElementById('export-btn').addEventListener('click', () => {
+            const snippets = transcriptionDisplay.getCodeSnippets();
+            const data = {
+                lectureId: currentLectureId,
+                snippets: snippets,
+                exportedAt: new Date().toISOString()
+            };
+
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `codesnippets-${Date.now()}.json`;
+            a.click();
+
+            showSuccess('Snippets exported successfully');
+        });
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success-message');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => { successDiv.style.display = 'none'; }, 3000);
+        }
+
+        // Update stats
+        setInterval(() => {
+            const stats = transcriptionDisplay.getStatistics();
+            document.getElementById('text-count').textContent = stats.totalEntries;
+            document.getElementById('snippet-count').textContent = stats.totalCode;
+        }, 1000);
+    </script>
+</body>
+</html>

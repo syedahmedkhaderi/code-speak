@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture Archive - CodeSpeak</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .archive-header {
+            background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            padding: 12px 30px;
+            background: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .lecture-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .lecture-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .lecture-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .lecture-info h3 {
+            margin: 0 0 5px 0;
+            color: #4A90E2;
+        }
+
+        .lecture-meta {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 15px;
+        }
+
+        .lecture-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .action-btn.view {
+            background: #4A90E2;
+            color: white;
+        }
+
+        .action-btn.view:hover {
+            background: #3A7BC8;
+        }
+
+        .action-btn.delete {
+            background: #E74C3C;
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background: #C0392B;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            color: #4A90E2;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 30px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover {
+            background: #4A90E2;
+            color: white;
+        }
+
+        .pagination button.active {
+            background: #4A90E2;
+            color: white;
+        }
+    </style>
+</head>
+<body class="protected">
+    <%- include('partials/header') %>
+
+    <main class="container" style="grid-template-columns: 1fr;">
+        <div class="archive-header">
+            <h2>📚 Lecture Archive</h2>
+            <p>View and search all your recorded lectures</p>
+        </div>
+
+        <div class="search-bar">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Search lectures by title, subject, or keywords..."
+            >
+            <button id="search-btn">🔍 Search</button>
+        </div>
+
+        <div id="loading" style="text-align: center; display: none;">
+            <div class="spinner"></div>
+            <p>Loading lectures...</p>
+        </div>
+
+        <div id="lecture-list" class="lecture-list"></div>
+
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <h3>No lectures yet</h3>
+            <p>Start recording a lecture to see it in your archive</p>
+            <a href="/live" class="btn btn-primary" style="margin-top: 20px;">Start Recording</a>
+        </div>
+
+        <div id="pagination" class="pagination"></div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        let currentPage = 1;
+        const lecturesPerPage = 10;
+
+        async function loadLectures(page = 1, search = '') {
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                let url = `/api/lectures/history?page=${page}&limit=${lecturesPerPage}`;
+                
+                if (search) {
+                    url = `/api/lectures/search?q=${encodeURIComponent(search)}`;
+                }
+
+                const response = await fetch(url, {
+                    headers: authManager.getAuthHeader()
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                renderLectures(data.lectures);
+                if (data.pagination) {
+                    renderPagination(data.pagination);
+                }
+
+                if (data.lectures.length === 0) {
+                    document.getElementById('empty-state').style.display = 'block';
+                } else {
+                    document.getElementById('empty-state').style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error('Error loading lectures:', error);
+                document.getElementById('empty-state').style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function renderLectures(lectures) {
+            const container = document.getElementById('lecture-list');
+            container.innerHTML = '';
+
+            lectures.forEach(lecture => {
+                const card = document.createElement('div');
+                card.className = 'lecture-card';
+
+                const duration = lecture.duration ? formatDuration(lecture.duration) : 'N/A';
+                const date = new Date(lecture.startTime).toLocaleDateString();
+
+                card.innerHTML = `
+                    <div class="lecture-info">
+                        <h3>${lecture.title}</h3>
+                        <div class="lecture-meta">
+                            <span>📚 ${lecture.subject}</span>
+                            <span>⏱️ ${duration}</span>
+                            <span>📅 ${date}</span>
+                        </div>
+                    </div>
+                    <div class="lecture-actions">
+                        <button class="action-btn view" onclick="viewLecture('${lecture._id}')">View</button>
+                        <button class="action-btn delete" onclick="deleteLecture('${lecture._id}')">Delete</button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderPagination(pagination) {
+            const container = document.getElementById('pagination');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= pagination.pages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = i === pagination.page ? 'active' : '';
+                btn.onclick = () => {
+                    currentPage = i;
+                    loadLectures(i);
+                };
+                container.appendChild(btn);
+            }
+        }
+
+        function formatDuration(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+
+            if (hours > 0) {
+                return `${hours}h ${minutes}m`;
+            }
+            return `${minutes}m ${secs}s`;
+        }
+
+        async function viewLecture(lectureId) {
+            window.location.href = `/lecture/${lectureId}`;
+        }
+
+        async function deleteLecture(lectureId) {
+            if (!confirm('Are you sure you want to delete this lecture?')) return;
+
+            try {
+                const response = await fetch(`/api/lectures/${lectureId}`, {
+                    method: 'DELETE',
+                    headers: authManager.getAuthHeader()
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete lecture');
+                }
+
+                loadLectures(currentPage);
+            } catch (error) {
+                console.error('Error deleting lecture:', error);
+                alert('Failed to delete lecture');
+            }
+        }
+
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const query = document.getElementById('search-input').value;
+            loadLectures(1, query);
+        });
+
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('search-btn').click();
+            }
+        });
+
+        // Load lectures on page load
+        loadLectures();
+    </script>
+</body>
+</html>
