@@ -11,7 +11,8 @@ CodeSpeak is a silent lecture accessibility tool designed for deaf/HOH CS studen
 ## Structure
 - **backend/**: Express.js server with MongoDB integration
 - **frontend/**: Web interface with EJS templates
-- **ml-service/**: Machine learning service (appears to be a placeholder)
+- **ml-service/**: Machine learning service (placeholder directory)
+- **tests/**: Test files for the application
 
 ## Language & Runtime
 **Language**: JavaScript (Node.js)
@@ -80,6 +81,7 @@ npm start
 
 #### Testing
 **Framework**: Jest
+**Test Location**: /tests
 **Run Command**:
 ```bash
 npm test
@@ -105,3 +107,7 @@ npm test
 **Status**: Placeholder directory, implementation not found
 **Expected Technology**: Python with Flask (based on project description)
 **Purpose**: Code detection and correction for transcriptions
+
+## Authors
+- Syed Ahmed Khaderi
+- Lubaina H
