@@ -12,7 +12,8 @@ CodeSpeak is a silent lecture accessibility tool designed for deaf/HOH CS studen
 - **backend/**: Express.js server with MongoDB integration
 - **frontend/**: Web interface with EJS templates
 - **ml-service/**: Machine learning service (placeholder directory)
-- **tests/**: Test files for the application
+- **tests/**: End-to-end test files for the application
+- **Claude RoadMaps/**: Documentation and planning files
 
 ## Language & Runtime
 **Language**: JavaScript (Node.js)
@@ -80,8 +81,9 @@ npm start
 ```
 
 #### Testing
-**Framework**: Jest
+**Framework**: Jest with Supertest
 **Test Location**: /tests
+**Test Files**: transcription.test.js
 **Run Command**:
 ```bash
 npm test
@@ -102,11 +104,39 @@ npm test
 - **views/index.ejs**: Landing page
 - **views/live.ejs**: Live transcription
 - **views/archive.ejs**: Past lectures
+- **views/login.ejs**: User authentication
+- **views/register.ejs**: User registration
 
 ### ML Service
 **Status**: Placeholder directory, implementation not found
 **Expected Technology**: Python with Flask (based on project description)
 **Purpose**: Code detection and correction for transcriptions
+
+## API Endpoints
+
+### Authentication
+```
+POST /api/auth/register    - Create new user
+POST /api/auth/login       - Login user
+POST /api/auth/logout      - Logout user
+```
+
+### Lectures
+```
+POST   /api/lectures/start           - Start new lecture
+POST   /api/lectures/end/:id         - End lecture
+GET    /api/lectures/history         - Get user's lectures
+GET    /api/lectures/:id             - Get specific lecture
+GET    /api/lectures/search?q=query  - Search lectures
+DELETE /api/lectures/:id             - Delete lecture
+```
+
+### Transcription
+```
+POST /api/transcription/process      - Process audio chunk
+GET  /api/transcription/live/:id     - Get live updates
+GET  /api/transcription/:id/full     - Get full transcript
+```
 
 ## Authors
 - Syed Ahmed Khaderi

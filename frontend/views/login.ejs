@@ -5,107 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CodeSpeak</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .auth-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 40px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .auth-container h2 {
-            text-align: center;
-            color: #4A90E2;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #4A90E2;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-        }
-
-        .error-message {
-            color: #E74C3C;
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: #FFEBEE;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 12px;
-            background: #4A90E2;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 20px;
-        }
-
-        .submit-btn:hover {
-            background: #3A7BC8;
-        }
-
-        .submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .auth-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .auth-link a {
-            color: #4A90E2;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .auth-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
 <body>
     <%- include('partials/header') %>
-
-    <main>
-        <div class="auth-container">
-            <h2>Login</h2>
-
-            <div class="error-message" id="errorMsg"></div>
-
-            <form id="loginForm" method="POST" action="/api/auth/login">
+    
+    <main class="auth-container">
+        <div class="auth-box">
+            <h2>Welcome Back</h2>
+            <form id="loginForm" class="auth-form">
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input 
@@ -117,7 +24,6 @@
                         autocomplete="email"
                     >
                 </div>
-
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input 
@@ -129,51 +35,16 @@
                         autocomplete="current-password"
                     >
                 </div>
-
-                <button type="submit" class="submit-btn">Login</button>
+                <div class="form-error" id="error-message"></div>
+                <button type="submit" class="btn btn-primary">Login</button>
             </form>
-
-            <div class="auth-link">
-                <p>Don't have an account? <a href="/register">Register here</a></p>
-            </div>
+            <p class="auth-alternate">
+                Don't have an account? <a href="/register">Register here</a>
+            </p>
         </div>
     </main>
 
     <%- include('partials/footer') %>
-
-    <script>
-        const loginForm = document.getElementById('loginForm');
-        const errorMsg = document.getElementById('errorMsg');
-
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(loginForm);
-            const data = Object.fromEntries(formData);
-
-            try {
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'Login failed');
-                }
-
-                // Save token and redirect
-                sessionStorage.setItem('authToken', result.token);
-                sessionStorage.setItem('user', JSON.stringify(result.user));
-                window.location.href = '/live';
-
-            } catch (error) {
-                errorMsg.textContent = error.message;
-                errorMsg.style.display = 'block';
-            }
-        });
-    </script>
+    <script src="/js/auth.js"></script>
 </body>
 </html>
