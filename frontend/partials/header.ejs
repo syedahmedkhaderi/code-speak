@@ -1,0 +1,24 @@
+<header>
+    <div class="header-content">
+        <div class="logo">
+            <h1>📝 CodeSpeak</h1>
+            <p class="tagline">Accessible Code Transcription</p>
+        </div>
+        
+        <nav class="nav">
+            <% if (typeof user !== 'undefined' && user) { %>
+                <a href="/live" class="nav-link">Live Lecture</a>
+                <a href="/archive" class="nav-link">Archive</a>
+                <span class="user-info">
+                    <span class="username"><%= user.name %></span>
+                    <form action="/api/auth/logout" method="POST" style="display: inline;">
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </span>
+            <% } else { %>
+                <a href="/login" class="nav-link">Login</a>
+                <a href="/register" class="nav-link">Register</a>
+            <% } %>
+        </nav>
+    </div>
+</header>
